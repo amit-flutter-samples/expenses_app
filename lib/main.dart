@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
+        errorColor: Colors.red,
         textTheme: ThemeData.light().textTheme.copyWith(
             title: TextStyle(
                 fontFamily: 'OpenSans',
@@ -61,11 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime choosenDate) {
     final newTrans = Transaction(
         title: title,
         amount: amount,
-        date: DateTime.now(),
+        date: choosenDate,
         id: DateTime.now().toString());
     setState(() {
       _transactions.add(newTrans);
@@ -75,6 +76,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(context: ctx, builder: (builderContext){
       return NewTransaction(_addNewTransaction);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((item) {
+        return item.id == id;
+      });
     });
   }
 
@@ -93,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Chart(_recentTransactions),
-            TransactionList(_transactions),
+            TransactionList(_transactions, _deleteTransaction),
           ],
         ),
       ),
